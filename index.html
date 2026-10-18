@@ -847,13 +847,1270 @@
               <div>
                 <h2 class="text-lg font-semibold text-[#2b2b2b]">Noa Pont</h2>
                 <p class="text-xs text-[#787872]">Writer, Worldbuilder &amp; Narrative Designer</p>
+              </div><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Noa | Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    body {
+      background-color: #e6e6e1;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Main Browser Canvas matching mockup proportions */
+    #desktop-frame {
+      width: 95vw;
+      max-width: 1400px;
+      height: 88vh;
+      height: 88dvh;
+      max-height: 820px;
+      background-color: #f7f7f2;
+      border-radius: 10px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Browser Top Bar */
+    .browser-bar {
+      height: 52px;
+      background-color: #f3f3ee;
+      border-bottom: 4px solid #eaeae4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .traffic-lights {
+      position: absolute;
+      left: 20px;
+      display: flex;
+      gap: 11px;
+    }
+
+    .light {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .light-red { background-color: #ea6153; }
+    .light-yellow { background-color: #f4b643; }
+    .light-green { background-color: #55c554; }
+
+    .browser-title {
+      color: #a6a6a1;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    /* Desktop Area */
+    #desktop-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    /* Visual Grid Cell Indicator when dragging an icon */
+    #grid-highlight {
+      position: absolute;
+      border: 2px dashed rgba(27, 135, 212, 0.45);
+      background-color: rgba(99, 199, 255, 0.12);
+      border-radius: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, left 0.1s ease, top 0.1s ease;
+      z-index: 3;
+    }
+
+    #grid-highlight.visible {
+      opacity: 1;
+    }
+
+    /* Serif "Hi. This is" */
+    .hi-text {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      color: #b1b1ac;
+      font-size: clamp(36px, 4.4vw, 62px);
+      position: absolute;
+      top: 16.5%;
+      left: 11.8%;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      line-height: 1;
+      z-index: 1;
+    }
+
+    /* Center Pixelated "Noa" Wrapper */
+    .nowa-wrapper {
+      position: absolute;
+      top: 50.5%;
+      left: 48.5%;
+      transform: translate(-50%, -50%);
+      width: 48%;
+      max-width: 640px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Desktop Icons (Folders, Files & Trash) snapped to OS Grid */
+    .desktop-item {
+      position: absolute;
+      width: 116px;
+      height: 116px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 10px;
+      touch-action: none;
+      transition:
+        left 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        top 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background-color 0.15s ease;
+      z-index: 5;
+    }
+
+    @media (hover: hover) {
+      .desktop-item:hover {
+        transform: translateY(-5px) scale(1.04);
+        background-color: rgba(0, 0, 0, 0.025);
+      }
+    }
+
+    .desktop-item:active {
+      transform: scale(0.96);
+    }
+
+    .desktop-item.icon-dragging {
+      transition: none !important;
+      transform: scale(1.08);
+      z-index: 25;
+      cursor: grabbing;
+      filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.14));
+    }
+
+    .folder-label {
+      margin-top: 4px;
+      font-size: 15.5px;
+      color: #2b2b2b;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      text-align: center;
+      white-space: nowrap;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Sticky Note */
+    .sticky-note {
+      position: absolute;
+      left: 3.5%;
+      bottom: 6%;
+      width: clamp(145px, 14.5vw, 195px);
+      height: clamp(150px, 15.2vw, 205px);
+      background-color: #fff69b;
+      border-radius: 9px;
+      box-shadow: -3px 5px 0px rgba(0, 0, 0, 0.07);
+      padding: 30px 18px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      z-index: 4;
+      transition: transform 0.2s ease;
+    }
+
+    @media (hover: hover) {
+      .sticky-note:hover {
+        transform: rotate(-1.5deg) scale(1.02);
+      }
+    }
+
+    .sticky-note::before {
+      content: '';
+      position: absolute;
+      top: 19px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: #f3e67b;
+    }
+
+    .sticky-text {
+      font-size: clamp(18px, 1.85vw, 25px);
+      line-height: 1.26;
+      color: #2c2c2a;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    /* Modal OS Window Styling */
+    .os-window {
+      position: absolute;
+      background: #fdfdfa;
+      border: 1px solid #d4d4ce;
+      border-radius: 10px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.85) translateY(15px);
+      pointer-events: none;
+      transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .os-window.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .os-window.minimized {
+      opacity: 0;
+      transform: scale(0.4) translateY(180px);
+      pointer-events: none;
+    }
+
+    /* Disable transform transition while actively dragging */
+    .os-window.dragging {
+      transition: none !important;
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.22);
+    }
+
+    .window-header {
+      height: 42px;
+      background: #f1f1eb;
+      border-bottom: 1px solid #e2e2dc;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      cursor: grab;
+      position: relative;
+      flex-shrink: 0;
+      touch-action: none;
+    }
+
+    .window-header:active {
+      cursor: grabbing;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .win-btn {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: transparent;
+      transition: color 0.15s ease, transform 0.1s ease;
+    }
+
+    .window-controls:hover .win-btn {
+      color: rgba(0, 0, 0, 0.55);
+    }
+
+    .win-btn:active {
+      transform: scale(0.9);
+    }
+
+    .win-close { background-color: #ea6153; }
+    .win-min { background-color: #f4b643; }
+    .win-max { background-color: #55c554; }
+
+    .window-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #6e6e68;
+      pointer-events: none;
+    }
+
+    .window-body {
+      padding: 20px;
+      overflow-y: auto;
+      max-height: 420px;
+      user-select: text;
+      -webkit-user-select: text;
+      color: #2e2e2c;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Shake keyframe for Trash easter egg */
+    @keyframes trashShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-4px, -2px) rotate(-6deg); }
+      40% { transform: translate(4px, 0px) rotate(6deg); }
+      60% { transform: translate(-3px, 1px) rotate(-4deg); }
+      80% { transform: translate(3px, -1px) rotate(4deg); }
+    }
+
+    .shake-anim {
+      animation: trashShake 0.4s ease-in-out;
+    }
+
+    /* ================= MOBILE & SMALL TABLET AESTHETIC ADAPTATION ================= */
+    @media (max-width: 767px) {
+      body {
+        background-color: #f7f7f2;
+      }
+
+      #desktop-frame {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .browser-bar {
+        height: 46px;
+        border-bottom-width: 3px;
+      }
+
+      .traffic-lights {
+        left: 14px;
+        gap: 8px;
+      }
+
+      .light {
+        width: 14px;
+        height: 14px;
+      }
+
+      .browser-title {
+        font-size: 17px;
+      }
+
+      /* Prominent, balanced mobile header placement for "Hi. This is Noa" */
+      .hi-text {
+        top: 4.5%;
+        left: 8%;
+        font-size: 32px;
+      }
+
+      .nowa-wrapper {
+        top: 16%;
+        left: 50%;
+        width: 74%;
+        opacity: 0.92;
+      }
+
+      /* Scaled-down crisp icons for 3x3 mobile grid */
+      .desktop-item {
+        width: 92px;
+        height: 96px;
+      }
+
+      .desktop-item svg {
+        transform: scale(0.78);
+        transform-origin: center bottom;
+      }
+
+      .folder-label {
+        font-size: 13px;
+        margin-top: 2px;
+      }
+
+      /* Sleek horizontal sticky-note widget docked at bottom-left on mobile */
+      .sticky-note {
+        left: 50%;
+        bottom: 14px;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 350px;
+        height: auto;
+        padding: 18px 16px 12px 16px;
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      }
+
+      .sticky-note::before {
+        top: 9px;
+        height: 2.5px;
+      }
+
+      .sticky-text {
+        font-size: 15px;
+        line-height: 1.25;
+        text-align: center;
+      }
+
+      .sticky-text br {
+        display: none;
+      }
+
+      /* Mobile OS Windows: Centered, responsive, touch-friendly controls */
+      .os-window {
+        max-width: 92vw !important;
+        max-height: 76dvh !important;
+      }
+
+      .window-header {
+        height: 44px;
+        padding: 0 12px;
+      }
+
+      .window-controls {
+        gap: 10px;
+      }
+
+      .win-btn {
+        width: 17px;
+        height: 17px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 10px;
+      }
+
+      .window-body {
+        padding: 16px;
+        max-height: calc(76dvh - 44px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Retro Portfolio Frame -->
+  <div id="desktop-frame">
+    
+    <!-- Top Window Bar -->
+    <div class="browser-bar">
+      <div class="traffic-lights">
+        <span class="light light-red"></span>
+        <span class="light light-yellow"></span>
+        <span class="light light-green"></span>
+      </div>
+      <div class="browser-title">portfolio</div>
+    </div>
+
+    <!-- Desktop Canvas -->
+    <div id="desktop-area">
+      
+      <!-- Target Grid Slot Highlight (visible while dragging icons) -->
+      <div id="grid-highlight"></div>
+
+      <!-- Background "Hi. This is" -->
+      <div class="hi-text">Hi. This is</div>
+
+      <!-- High-Contrast Pixelated Serif "Noa" SVG -->
+      <div class="nowa-wrapper">
+        <svg viewBox="0 0 600 280" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <g fill="#2b2b2b">
+            <!-- ==================== 'N' ==================== -->
+            <rect x="65" y="36" width="52" height="10" />
+            <rect x="92" y="46" width="10" height="58" />
+            <rect x="85" y="104" width="10" height="56" />
+            <rect x="78" y="160" width="10" height="56" />
+            <rect x="72" y="216" width="10" height="22" />
+            <rect x="48" y="238" width="66" height="10" />
+
+            <!-- Thick Diagonal Stroke of N -->
+            <rect x="102" y="46" width="26" height="14" />
+            <rect x="108" y="60" width="28" height="16" />
+            <rect x="116" y="76" width="28" height="16" />
+            <rect x="124" y="92" width="28" height="16" />
+            <rect x="132" y="108" width="28" height="16" />
+            <rect x="140" y="124" width="28" height="16" />
+            <rect x="148" y="140" width="28" height="16" />
+            <rect x="156" y="156" width="28" height="16" />
+            <rect x="164" y="172" width="28" height="16" />
+            <rect x="172" y="188" width="28" height="16" />
+            <rect x="180" y="204" width="28" height="18" />
+            <rect x="188" y="222" width="26" height="16" />
+            <rect x="196" y="238" width="16" height="10" />
+
+            <!-- Top-right serif of N -->
+            <rect x="202" y="36" width="64" height="10" />
+            <rect x="228" y="46" width="10" height="56" />
+            <rect x="221" y="102" width="10" height="56" />
+            <rect x="214" y="158" width="10" height="56" />
+            <rect x="208" y="214" width="10" height="24" />
+
+            <!-- ==================== 'o' ==================== -->
+            <rect x="308" y="88" width="54" height="11" />
+            <rect x="292" y="99" width="22" height="12" />
+            <rect x="356" y="99" width="22" height="12" />
+            <rect x="276" y="111" width="32" height="22" />
+            <rect x="364" y="111" width="32" height="22" />
+            <rect x="266" y="133" width="34" height="68" />
+            <rect x="370" y="133" width="34" height="68" />
+            <rect x="272" y="201" width="32" height="24" />
+            <rect x="360" y="201" width="32" height="24" />
+            <rect x="286" y="225" width="22" height="12" />
+            <rect x="346" y="225" width="22" height="12" />
+            <rect x="302" y="237" width="50" height="11" />
+
+            <!-- ==================== 'a' ==================== -->
+            <rect x="444" y="88" width="64" height="11" />
+            <rect x="428" y="99" width="24" height="14" />
+            <rect x="418" y="113" width="28" height="22" />
+            <rect x="502" y="99" width="30" height="24" />
+            <rect x="506" y="123" width="30" height="102" />
+            <rect x="476" y="148" width="30" height="10" />
+            <rect x="446" y="158" width="30" height="10" />
+            <rect x="424" y="168" width="24" height="14" />
+            <rect x="412" y="182" width="30" height="36" />
+            <rect x="422" y="218" width="26" height="18" />
+            <rect x="440" y="236" width="44" height="12" />
+            <rect x="484" y="224" width="22" height="12" />
+            <rect x="506" y="225" width="32" height="23" />
+            <rect x="538" y="225" width="16" height="12" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Desktop & Mobile Grid Items (data-col/row for Desktop 8x4, data-mcol/mrow for Mobile 3x3) -->
+      <!-- 1. about_me.txt -->
+      <div class="desktop-item" data-col="3" data-row="0" data-mcol="0" data-mrow="0" data-action="about">
+        <svg width="76" height="82" viewBox="0 0 84 90" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 10 L54 10 L72 28 L72 80 C72 83.3, 69.3 86, 66 86 L12 86 C8.7 86, 6 83.3, 6 80 L6 16 C6 12.7, 8.7 10, 12 10 Z" fill="#dfdfd9" />
+          <path d="M16 6 L56 6 L74 24 L74 76 C74 79.3, 71.3 82, 68 82 L16 82 C12.7 82, 10 79.3, 10 76 L10 12 C10 8.7, 12.7 6, 16 6 Z" fill="#ffffff" stroke="#d5d5ce" stroke-width="1.5" />
+          <path d="M56 6 L56 18 C56 21.3, 58.7 24, 62 24 L74 24 Z" fill="#ededeb" stroke="#d5d5ce" stroke-width="1.5" stroke-linejoin="round" />
+          <rect x="22" y="34" width="40" height="4" rx="2" fill="#c4c4bc" />
+          <rect x="22" y="45" width="40" height="4" rx="2" fill="#c4c4bc" />
+          <rect x="22" y="56" width="26" height="4" rx="2" fill="#c4c4bc" />
+          <rect x="22" y="18" width="22" height="9" rx="2.5" fill="#63c7ff" />
+        </svg>
+        <span class="folder-label">about_me.txt</span>
+      </div>
+
+      <!-- 2. personal work -->
+      <div class="desktop-item" data-col="6" data-row="0" data-mcol="1" data-mrow="0" data-action="personal">
+        <div class="folder-icon"></div>
+        <span class="folder-label">personal work</span>
+      </div>
+
+      <!-- 3. resume -->
+      <div class="desktop-item" data-col="1" data-row="1" data-mcol="2" data-mrow="0" data-action="resume">
+        <div class="folder-icon"></div>
+        <span class="folder-label">resume</span>
+      </div>
+
+      <!-- 4. samples -->
+      <div class="desktop-item" data-col="3" data-row="2" data-mcol="0" data-mrow="1" data-action="samples">
+        <div class="folder-icon"></div>
+        <span class="folder-label">samples</span>
+      </div>
+
+      <!-- 5. blog -->
+      <div class="desktop-item" data-col="6" data-row="1" data-mcol="1" data-mrow="1" data-action="blog">
+        <div class="folder-icon"></div>
+        <span class="folder-label">blog</span>
+      </div>
+
+      <!-- 6. contact -->
+      <div class="desktop-item" data-col="2" data-row="3" data-mcol="2" data-mrow="1" data-action="contact">
+        <div class="folder-icon"></div>
+        <span class="folder-label">contact</span>
+      </div>
+
+      <!-- 7. trash bin -->
+      <div id="trash-item" class="desktop-item" data-col="5" data-row="2" data-mcol="1" data-mrow="2" data-action="trash">
+        <svg width="74" height="90" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="trashBody" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#e4e6e9" stop-opacity="0.9"/>
+              <stop offset="30%" stop-color="#cfd3d8" stop-opacity="0.88"/>
+              <stop offset="70%" stop-color="#dcdfe4" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#f3f4f6" stop-opacity="0.95"/>
+            </linearGradient>
+            <linearGradient id="trashRim" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="50%" stop-color="#cfd2d6" />
+              <stop offset="100%" stop-color="#ffffff" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="40" cy="88" rx="22" ry="5" fill="rgba(0,0,0,0.08)" />
+          <ellipse cx="40" cy="16" rx="28" ry="6.5" fill="#c5c9ce" />
+          <path d="M12 16 L20 84 C20 88, 60 88, 60 84 L68 16 Z" fill="url(#trashBody)" stroke="#d0d4d9" stroke-width="1"/>
+          <path d="M52 20 L48 83 L55 82 L61 20 Z" fill="rgba(255,255,255,0.45)" />
+          <ellipse cx="40" cy="16" rx="28" ry="6.5" fill="none" stroke="url(#trashRim)" stroke-width="2.5" />
+          <path d="M20 83 C20 87, 60 87, 60 83" fill="none" stroke="#ffffff" stroke-width="2" />
+        </svg>
+        <span class="folder-label" style="margin-top: 2px;">trash bin</span>
+      </div>
+
+      <!-- Sticky Note (Bottom-left on Desktop, Bottom Dock Pill on Mobile) -->
+      <div class="sticky-note">
+        <div class="sticky-text">
+          writer &amp;<br>
+          narrative<br>
+          designer
+        </div>
+      </div>
+
+      <!-- ================= MODAL OS WINDOWS CONTAINER ================= -->
+      <div id="windows-container"></div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification for Simulated File Downloads -->
+  <div id="download-toast" class="fixed bottom-6 right-6 bg-[#2b2b2b] text-[#f7f7f2] px-4 py-3 rounded-lg shadow-xl text-sm flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-300 z-50">
+    <svg class="w-4 h-4 text-[#63c7ff] animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+    </svg>
+    <span id="toast-message">Downloading file...</span>
+  </div>
+
+  <script>
+    // Inject identical SVG folder icons matching the mockup
+    const folderSVG = `
+      <svg width="96" height="82" viewBox="0 0 105 90" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="13" width="92" height="72" rx="9" fill="#dfdfd9" />
+        <path d="M8 14 C8 9.5, 11.5 6, 16 6 L34 6 C38 6, 40 9, 43 13 L92 13 C96.5 13, 100 16.5, 100 21 L100 76 C100 80.5, 96.5 84, 92 84 L16 84 C11.5 84, 8 80.5, 8 76 Z" fill="#1b87d4" />
+        <rect x="8" y="19" width="92" height="65" rx="8" fill="#63c7ff" />
+      </svg>
+    `;
+
+    document.querySelectorAll('.folder-icon').forEach(el => {
+      el.innerHTML = folderSVG;
+    });
+
+    // ================= RESPONSIVE DESKTOP & MOBILE ICON GRID SYSTEM =================
+    const desktopArea = document.getElementById('desktop-area');
+    const gridHighlight = document.getElementById('grid-highlight');
+    const desktopItems = Array.from(document.querySelectorAll('.desktop-item'));
+
+    function isMobileViewport() {
+      return window.innerWidth < 768;
+    }
+
+    function getActiveCoordKeys() {
+      return isMobileViewport()
+        ? { colKey: 'mcol', rowKey: 'mrow' }
+        : { colKey: 'col', rowKey: 'row' };
+    }
+
+    function getGridMetrics() {
+      const rect = desktopArea.getBoundingClientRect();
+      const mobile = isMobileViewport();
+      const cols = mobile ? 3 : 8;
+      const rows = mobile ? 3 : 4;
+      const iconW = mobile ? 92 : 116;
+      const iconH = mobile ? 96 : 116;
+
+      // On mobile, start the 3x3 icon grid right below the "Hi. This is Noa" header
+      const padX = mobile ? rect.width * 0.05 : rect.width * 0.04;
+      const padTop = mobile ? rect.height * 0.27 : rect.height * 0.08;
+      const padBottom = mobile ? rect.height * 0.14 : rect.height * 0.06;
+
+      const usableW = rect.width - padX * 2;
+      const usableH = Math.max(240, rect.height - padTop - padBottom);
+      const cellW = usableW / cols;
+      const cellH = usableH / rows;
+
+      return { padX, padTop, cellW, cellH, cols, rows, iconW, iconH, mobile };
+    }
+
+    function gridToPixels(col, row) {
+      const { padX, padTop, cellW, cellH, iconW, iconH } = getGridMetrics();
+      const left = padX + col * cellW + (cellW - iconW) / 2;
+      const top = padTop + row * cellH + (cellH - iconH) / 2;
+      return { left, top, iconW, iconH };
+    }
+
+    function pixelsToGrid(centerX, centerY) {
+      const { padX, padTop, cellW, cellH, cols, rows, mobile } = getGridMetrics();
+      let col = Math.floor((centerX - padX) / cellW);
+      let row = Math.floor((centerY - padTop) / cellH);
+      col = Math.max(0, Math.min(cols - 1, col));
+      row = Math.max(0, Math.min(rows - 1, row));
+
+      // On desktop, keep bottom-left sticky note slots clear
+      if (!mobile && col === 0 && row >= 2) {
+        col = 1;
+      }
+      return { col, row };
+    }
+
+    function layoutIconsOnGrid() {
+      const { colKey, rowKey } = getActiveCoordKeys();
+      desktopItems.forEach(item => {
+        const col = parseInt(item.dataset[colKey], 10);
+        const row = parseInt(item.dataset[rowKey], 10);
+        const pos = gridToPixels(col, row);
+        item.style.left = `${pos.left}px`;
+        item.style.top = `${pos.top}px`;
+      });
+    }
+
+    // Unified Pointer Events (Mouse + Touch) for Dragging Icons & Tapping to Open
+    desktopItems.forEach(item => {
+      let startX = 0, startY = 0;
+      let origLeft = 0, origTop = 0;
+      let isDraggingIcon = false;
+      let activePointerId = null;
+
+      item.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0 && e.pointerType === 'mouse') return;
+        e.preventDefault();
+        activePointerId = e.pointerId;
+        item.setPointerCapture(activePointerId);
+
+        const rect = item.getBoundingClientRect();
+        const parentRect = desktopArea.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        origLeft = rect.left - parentRect.left;
+        origTop = rect.top - parentRect.top;
+        isDraggingIcon = false;
+      });
+
+      item.addEventListener('pointermove', (e) => {
+        if (e.pointerId !== activePointerId) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (!isDraggingIcon && Math.hypot(dx, dy) > 7) {
+          isDraggingIcon = true;
+          const { iconW, iconH } = getGridMetrics();
+          item.classList.add('icon-dragging');
+          gridHighlight.style.width = `${iconW}px`;
+          gridHighlight.style.height = `${iconH}px`;
+          gridHighlight.classList.add('visible');
+        }
+
+        if (isDraggingIcon) {
+          const { iconW, iconH } = getGridMetrics();
+          const newLeft = origLeft + dx;
+          const newTop = origTop + dy;
+          item.style.left = `${newLeft}px`;
+          item.style.top = `${newTop}px`;
+
+          const centerX = newLeft + iconW / 2;
+          const centerY = newTop + iconH / 2;
+          const targetCell = pixelsToGrid(centerX, centerY);
+          const snapPos = gridToPixels(targetCell.col, targetCell.row);
+          gridHighlight.style.left = `${snapPos.left}px`;
+          gridHighlight.style.top = `${snapPos.top}px`;
+        }
+      });
+
+      function endIconPointer(e) {
+        if (e.pointerId !== activePointerId) return;
+        item.releasePointerCapture(activePointerId);
+        activePointerId = null;
+
+        if (isDraggingIcon) {
+          item.classList.remove('icon-dragging');
+          gridHighlight.classList.remove('visible');
+
+          const { iconW, iconH } = getGridMetrics();
+          const { colKey, rowKey } = getActiveCoordKeys();
+          const curLeft = parseFloat(item.style.left);
+          const curTop = parseFloat(item.style.top);
+          const target = pixelsToGrid(curLeft + iconW / 2, curTop + iconH / 2);
+
+          const prevCol = item.dataset[colKey];
+          const prevRow = item.dataset[rowKey];
+
+          // Swap slots if another icon is already in the target cell
+          const occupant = desktopItems.find(
+            other => other !== item &&
+            parseInt(other.dataset[colKey], 10) === target.col &&
+            parseInt(other.dataset[rowKey], 10) === target.row
+          );
+
+          if (occupant) {
+            occupant.dataset[colKey] = prevCol;
+            occupant.dataset[rowKey] = prevRow;
+          }
+
+          item.dataset[colKey] = target.col;
+          item.dataset[rowKey] = target.row;
+          layoutIconsOnGrid();
+        } else {
+          // Tap / Click -> Open Window
+          const action = item.dataset.action;
+          if (action === 'trash') {
+            triggerTrash();
+          } else {
+            openWindow(action);
+          }
+        }
+      }
+
+      item.addEventListener('pointerup', endIconPointer);
+      item.addEventListener('pointercancel', endIconPointer);
+    });
+
+    // ================= WINDOW DATA & FILE CONTENT DEFINITIONS =================
+    const windowConfigs = {
+      about: {
+        title: 'about_me.txt',
+        width: 440,
+        top: 95,
+        left: 340,
+        content: `
+          <div class="space-y-4 font-mono text-xs">
+            <div class="flex items-center gap-4 border-b border-[#e8e8e2] pb-4 font-sans">
+              <div class="w-14 h-14 rounded-full bg-[#63c7ff]/20 border border-[#63c7ff] flex items-center justify-center text-xl font-serif italic text-[#1b87d4] flex-shrink-0">
+                N
               </div>
+              <div>
+                <h2 class="text-lg font-semibold text-[#2b2b2b]">Noa Pont</h2>
+                <p class="text-xs text-[#787872]">Writer, Worldbuilder &amp; Narrative Designer</p>
+              </div>
+            </div>
+            <p class="text-sm leading-relaxed text-[#454542] font-sans">
+              Hi! I'm <strong>Noa</strong>. I'm a writer with a special interest in crafting intreactive stories, living worlds, and dialogue systems for indie and AA games.
+            </p>
+            <p class="text-sm leading-relaxed text-[#454542] font-sans">
+              My background blends literary fiction with game systems design and player agency through environmental storytelling, barks, and character design. 
+            </p>
+          </div>
+        `
+      },
+      samples: {
+        title: 'samples',
+        width: 500,
+        top: 110,
+        left: 390,
+        content: `
+          <p class="text-xs text-[#7a7a74] mb-3">Selected narrative design documents, branching scripts &amp; bibles:</p>
+          <div class="space-y-2.5">
+            ${createFileRow(
+              'Sample1.pdf',
+              'PDF Document • 2.4 MB',
+              'Description of the sample',
+              'Sample1.txt',
+              'QUEST DESIGN DOCUMENT: THE CLOCKWORK VIGIL\\n\\nObjective: Investigate the disappearance of the Arch-Horologist.\\nBranches: 4 Major Endings, 12 Skill Checks (Rhetoric / Perception).'
+            )}
+            ${createFileRow(
+              'Sample2.docx',
+              'Word  • 840 KB',
+              'Description of the sample',
+              'Sample2.txt',
+              '=== companion_confrontation ===\\n{ trust >= 5: \\n  "I stayed because I believed in you, Noa."\\n- else:\\n  "Give me one reason not to walk out that airlock."\\n}'
+            )}
+            ${createFileRow(
+              'Sample3.pdf',
+              'PDF Document • 5.1 MB',
+              'Description of the sample',
+              'Sample3.pdf',
+              'WORLDBUILDING BIBLE: THE SUNDERED ESTUARY\\n\\n1. Cosmology & Tides\\n2. The Guild of Salt-Scribes\\n3. Dialect & Slang Lexicon'
+            )}
+          </div>
+        `
+      },
+      resume: {
+        title: 'resume',
+        width: 460,
+        top: 130,
+        left: 200,
+        content: `
+          <div class="space-y-4">
+            ${createFileRow(
+              'Noa_Pont_CV.pdf',
+              'PDF Document • 420 KB',
+              'Full curriculum vitae including previous experience.',
+              'Noa_Pont_CV.pdf',
+              'NOA — NARRATIVE DESIGNER & WRITER\\n\\nEXPERIENCE:\\n- Lead Narrative Designer @ Studio Astral (2023–Present)\\n- Junior Game Writer @ Clockwork Interactive (2021–2023)'
+            )}
+            <div class="border-t border-[#e6e6e0] pt-3 space-y-3 text-xs">
+                      </div>
+        `
+      },
+      personal: {
+        title: 'personal work',
+        width: 480,
+        top: 105,
+        left: 440,
+        content: `
+          <p class="text-xs text-[#7a7a74] mb-3"></p>
+          <div class="space-y-2.5">
+            ${createFileRow(
+              'Sample1.html',
+              'Interactive Twine Game • 1.1 MB',
+              'Description of the sample',
+              'Sample1.html',
+              'ECHOES OF VELVET (Interactive Fiction)\\nWinner of the Midnight Jam Narrative Award.\\nPlaytime: ~45 mins.'
+            )}
+            ${createFileRow(
+              'Sample2.pdf',
+              'Short Fiction • 3.2 MB',
+              'Description of the sample',
+              'Sample2.pdf',
+              'THE GLASS HARBOR ANTHOLOGY\\n"Every Tuesday, the tide brought back the memories nobody wanted to keep..."'
+            )}
+            ${createFileRow(
+              'Sample3.xlsx',
+              'Spreadsheet Template • 310 KB',
+              'Description of the sample',
+              'Sample3.csv',
+              'State,Intensity,Line,Cooldown\\nAlert,High,"Check the alcove! Torch went out!",15s\\nIdle,Low,"Feet hurt worse than my rations taste.",60s'
+            )}
+          </div>
+        `
+      },
+      blog: {
+        title: 'blog',
+        width: 450,
+        top: 140,
+        left: 380,
+        content: `
+          <div class="space-y-3">
+            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Blog Entry', 'Description of the entry')">
+              <div class="text-[11px] text-[#8a8a84]">Oct 14 • 5 min read</div>
+              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Entry 1</h3>
+              <p class="text-xs text-[#5a5a55] mt-1">Description of the entry</p>
+            </article>
+            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Entry 2', 'Description of the entry')">
+              <div class="text-[11px] text-[#8a8a84]">Sep 02 • 4 min read</div>
+              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Entry 2</h3>
+              <p class="text-xs text-[#5a5a55] mt-1">Description of the entry</p>
+            </article>
+            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Entry 3', 'Descriptions of the entry')">
+              <div class="text-[11px] text-[#8a8a84]">Jul 19 • 6 min read</div>
+              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Entry 3</h3>
+              <p class="text-xs text-[#5a5a55] mt-1">Description of the entry</p>
+            </article>
+            <div id="blog-reader" class="hidden mt-3 p-3 bg-white border border-[#e0e0d8] rounded text-xs text-[#3b3b38] leading-relaxed"></div>
+          </div>
+        `
+      },
+      contact: {
+        title: 'contact',
+        width: 400,
+        top: 150,
+        left: 290,
+        content: `
+          <div class="space-y-4">
+            <p class="text-xs text-[#5a5a55] leading-relaxed">
+              Available for freelance narrative design, script, and full-time studio roles.
+            </p>
+            <div class="bg-[#f3f3ee] p-3 rounded-lg space-y-2 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-[#7a7a74]">Email</span>
+                <a href="mailto:17pontnoa@gmail.com" class="text-[#1b87d4] font-medium hover:underline">17pontnoa@gmail.com</a>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-[#7a7a74]">Instagram</span>
+                <span class="text-[#2b2b2b] font-medium">@noaapm_</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-[#7a7a74]">GitHub</span>
+                <span class="text-[#2b2b2b] font-medium">noapont</span>
+              </div>
+            </div>
+            <form onsubmit="handleContactSubmit(event)" class="space-y-2.5">
+              <input type="text" required placeholder="Your name or studio" class="w-full px-3 py-2 text-xs bg-white border border-[#dcdcd4] rounded focus:outline-none focus:border-[#63c7ff]" />
+              <textarea rows="3" required placeholder="Tell me about your project or world..." class="w-full px-3 py-2 text-xs bg-white border border-[#dcdcd4] rounded focus:outline-none focus:border-[#63c7ff]"></textarea>
+              <button type="submit" class="w-full py-2.5 bg-[#2b2b2b] hover:bg-[#404040] text-white text-xs font-medium rounded transition">
+                Send Message
+              </button>
+            </form>
+          </div>
+        `
+      },
+      trash: {
+        title: 'trash',
+        width: 430,
+        top: 140,
+        left: 470,
+        content: `
+          <p class="text-xs text-[#7a7a74] mb-3">:</p>
+          <div class="space-y-2">
+            ${createFileRow(
+              'Draft1.txt',
+              '12 KB',
+              '"Discarded"',
+              'Draft1.txt',
+              'PITCH REJECTED BY PRODUCER:\\n"Noa, we cannot allocate 4,000 words of branching romance to a wooden chest with teeth."'
+            )}
+            ${createFileRow(
+              'Draft2.txt',
+              '64 KB',
+              'Discarded',
+              'Draft2.txt',
+              '// TODO: fix loop where player accidentally convinces the tutorial rat to unionize.'
+            )}
+            ${createFileRow(
+              'Draft3.pdf',
+              '1.8 MB',
+              'Discarded',
+              'Draft3.txt',
+              'Lesson 1: A 15-degree left shoulder tilt indicates existential dread.'
+            )}
+          </div>
+        `
+      }
+    };
+
+    function createFileRow(name, meta, desc, dlFile, dlBody) {
+      const encodedBody = encodeURIComponent(dlBody);
+      return `
+        <div class="flex items-start justify-between gap-3 p-2.5 rounded-lg border border-[#e6e6e0] bg-white hover:border-[#63c7ff] transition group">
+          <div class="flex items-start gap-2.5 min-w-0">
+            <div class="w-8 h-9 rounded bg-[#f3f3ee] border border-[#dcdcd4] flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px] font-semibold text-[#1b87d4]">
+              DOC
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-semibold text-[#2b2b2b] group-hover:text-[#1b87d4] transition truncate">${name}</div>
+              <div class="text-[10px] text-[#8a8a84]">${meta}</div>
+              <div class="text-[11px] text-[#555550] mt-1">${desc}</div>
+            </div>
+          </div>
+          <button
+            onclick="downloadSampleFile('${dlFile}', '${encodedBody}')"
+            class="px-2.5 py-1.5 rounded bg-[#f3f3ee] hover:bg-[#63c7ff] hover:text-white text-[#2b2b2b] text-[11px] font-medium transition flex items-center gap-1 flex-shrink-0"
+            title="Download file"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download
+          </button>
+        </div>
+      `;
+    }
+
+    // Build all windows into DOM on load
+    const container = document.getElementById('windows-container');
+    let highestZ = 30;
+
+    Object.keys(windowConfigs).forEach(key => {
+      const cfg = windowConfigs[key];
+      const win = document.createElement('div');
+      win.id = `win-${key}`;
+      win.className = 'os-window';
+      win.style.width = `${cfg.width}px`;
+      win.style.top = `${cfg.top}px`;
+      win.style.left = `${cfg.left}px`;
+      win.style.zIndex = highestZ;
+
+      win.innerHTML = `
+        <div class="window-header" data-win="win-${key}">
+          <div class="window-controls">
+            <button class="win-btn win-close" onclick="closeWindow('${key}')" title="Close">✕</button>
+            <button class="win-btn win-min" onclick="minimizeWindow('${key}')" title="Minimize">−</button>
+            <button class="win-btn win-max" onclick="bringToFront('win-${key}')" title="Focus">+</button>
+          </div>
+          <div class="window-title">${cfg.title}</div>
+        </div>
+        <div class="window-body">
+          ${cfg.content}
+        </div>
+      `;
+
+      win.addEventListener('pointerdown', () => bringToFront(`win-${key}`));
+      container.appendChild(win);
+    });
+
+    // Attach unified Pointer Events dragging to all window headers
+    document.querySelectorAll('.window-header').forEach(header => {
+      let winEl = null;
+      let offsetX = 0, offsetY = 0;
+      let activePtr = null;
+
+      header.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.window-controls')) return;
+        e.preventDefault();
+        const winId = header.dataset.win;
+        winEl = document.getElementById(winId);
+        if (!winEl) return;
+
+        activePtr = e.pointerId;
+        header.setPointerCapture(activePtr);
+        bringToFront(winId);
+        winEl.classList.add('dragging');
+
+        const rect = winEl.getBoundingClientRect();
+        const parentRect = desktopArea.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+      });
+
+      header.addEventListener('pointermove', (e) => {
+        if (e.pointerId !== activePtr || !winEl) return;
+        const parentRect = desktopArea.getBoundingClientRect();
+        let newLeft = e.clientX - parentRect.left - offsetX;
+        let newTop = e.clientY - parentRect.top - offsetY;
+
+        newTop = Math.max(6, Math.min(parentRect.height - 46, newTop));
+        newLeft = Math.max(-winEl.offsetWidth + 90, Math.min(parentRect.width - 90, newLeft));
+
+        winEl.style.left = `${newLeft}px`;
+        winEl.style.top = `${newTop}px`;
+      });
+
+      function endWinDrag(e) {
+        if (e.pointerId !== activePtr) return;
+        header.releasePointerCapture(activePtr);
+        if (winEl) winEl.classList.remove('dragging');
+        winEl = null;
+        activePtr = null;
+      }
+
+      header.addEventListener('pointerup', endWinDrag);
+      header.addEventListener('pointercancel', endWinDrag);
+    });
+
+    function bringToFront(winId) {
+      highestZ++;
+      const el = document.getElementById(winId);
+      if (el) el.style.zIndex = highestZ;
+    }
+
+    // Center window nicely on mobile screens or keep desktop coordinates
+    function positionWindowForViewport(key) {
+      const win = document.getElementById(`win-${key}`);
+      const cfg = windowConfigs[key];
+      if (!win || !cfg) return;
+
+      const parentRect = desktopArea.getBoundingClientRect();
+      if (isMobileViewport()) {
+        const w = Math.min(cfg.width, parentRect.width * 0.92);
+        win.style.width = `${w}px`;
+        win.style.left = `${(parentRect.width - w) / 2}px`;
+        win.style.top = `${Math.max(18, parentRect.height * 0.08)}px`;
+      } else {
+        win.style.width = `${cfg.width}px`;
+        // Clamp within current desktop area so it never clips off-screen
+        const clampedLeft = Math.max(16, Math.min(cfg.left, parentRect.width - cfg.width - 16));
+        const clampedTop = Math.max(16, Math.min(cfg.top, parentRect.height - 280));
+        win.style.left = `${clampedLeft}px`;
+        win.style.top = `${clampedTop}px`;
+      }
+    }
+
+    function openWindow(key) {
+      const win = document.getElementById(`win-${key}`);
+      if (!win) return;
+      positionWindowForViewport(key);
+      win.classList.remove('minimized');
+      win.classList.add('open');
+      bringToFront(`win-${key}`);
+    }
+
+    function closeWindow(key) {
+      const win = document.getElementById(`win-${key}`);
+      if (!win) return;
+      win.classList.remove('open', 'minimized');
+    }
+
+    function minimizeWindow(key) {
+      const win = document.getElementById(`win-${key}`);
+      if (!win) return;
+      win.classList.add('minimized');
+      setTimeout(() => win.classList.remove('open'), 200);
+    }
+
+    function triggerTrash() {
+      const trash = document.getElementById('trash-item');
+      trash.classList.remove('shake-anim');
+      void trash.offsetWidth;
+      trash.classList.add('shake-anim');
+      openWindow('trash');
+    }
+
+    function downloadSampleFile(filename, encodedContent) {
+      const text = decodeURIComponent(encodedContent);
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast(`Downloaded "${filename}"`);
+    }
+
+    function previewPost(title, body) {
+      const reader = document.getElementById('blog-reader');
+      if (!reader) return;
+      reader.classList.remove('hidden');
+      reader.innerHTML = `<strong class="block text-[#2b2b2b] mb-1">${title}</strong>${body || ''}`;
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      e.target.reset();
+      showToast('Message sent to Noa!');
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('download-toast');
+      const label = document.getElementById('toast-message');
+      label.textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2600);
+    }
+
+    window.addEventListener('resize', () => {
+      layoutIconsOnGrid();
+      Object.keys(windowConfigs).forEach(key => {
+        const win = document.getElementById(`win-${key}`);
+        if (win && win.classList.contains('open')) {
+          positionWindowForViewport(key);
+        }
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', layoutIconsOnGrid);
+    layoutIconsOnGrid();
+  </script>
+</body>
+</html>
             </div>
             <p class="text-sm leading-relaxed text-[#454542] font-sans">
               Hi! I'm <strong>Noa</strong>. Placeholder blablabla escribir texto de about me
             </p>
             <p class="text-sm leading-relaxed text-[#454542] font-sans">
-              My background blends literary fiction with game systems design and player agency through environmental storytelling, barks, and character design. 
+            blablablablabla
             </p>
           </div>
         `
