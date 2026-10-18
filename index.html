@@ -87,6 +87,22 @@
       overflow: hidden;
     }
 
+    /* Visual Grid Cell Indicator when dragging an icon */
+    #grid-highlight {
+      position: absolute;
+      border: 2px dashed rgba(27, 135, 212, 0.45);
+      background-color: rgba(99, 199, 255, 0.12);
+      border-radius: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, left 0.1s ease, top 0.1s ease;
+      z-index: 3;
+    }
+
+    #grid-highlight.visible {
+      opacity: 1;
+    }
+
     /* Serif "Hi. This is" */
     .hi-text {
       font-family: 'Instrument Serif', Georgia, serif;
@@ -112,33 +128,48 @@
       pointer-events: none;
     }
 
-    /* Desktop Icons (Folders & Trash) */
+    /* Desktop Icons (Folders, Files & Trash) snapped to OS Grid */
     .desktop-item {
       position: absolute;
+      width: 116px;
+      height: 116px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border-radius: 10px;
+      transition:
+        left 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        top 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background-color 0.15s ease;
       z-index: 5;
     }
 
     .desktop-item:hover {
-      transform: translateY(-6px) scale(1.04);
+      transform: translateY(-5px) scale(1.04);
+      background-color: rgba(0, 0, 0, 0.025);
     }
 
-    .desktop-item:active {
-      transform: translateY(-2px) scale(0.98);
+    .desktop-item.icon-dragging {
+      transition: none !important;
+      transform: scale(1.08);
+      z-index: 25;
+      cursor: grabbing;
+      filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.14));
     }
 
     .folder-label {
       margin-top: 4px;
-      font-size: 16.5px;
+      font-size: 16px;
       color: #2b2b2b;
       font-weight: 400;
       letter-spacing: -0.01em;
       text-align: center;
       white-space: nowrap;
+      padding: 1px 6px;
+      border-radius: 4px;
     }
 
     /* Sticky Note */
@@ -313,6 +344,9 @@
     <!-- Desktop Canvas -->
     <div id="desktop-area">
       
+      <!-- Target Grid Slot Highlight (visible while dragging icons) -->
+      <div id="grid-highlight"></div>
+
       <!-- Background "Hi. This is" -->
       <div class="hi-text">Hi. This is</div>
 
@@ -321,14 +355,11 @@
         <svg viewBox="0 0 860 280" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
           <g fill="#2b2b2b">
             <!-- ==================== 'N' ==================== -->
-            <!-- Top-left serif -->
             <rect x="65" y="36" width="52" height="10" />
-            <!-- Left vertical stem (thin) -->
             <rect x="92" y="46" width="10" height="58" />
             <rect x="85" y="104" width="10" height="56" />
             <rect x="78" y="160" width="10" height="56" />
             <rect x="72" y="216" width="10" height="22" />
-            <!-- Bottom-left serif -->
             <rect x="48" y="238" width="66" height="10" />
 
             <!-- Thick Diagonal Stroke of N -->
@@ -348,18 +379,15 @@
 
             <!-- Top-right serif of N -->
             <rect x="202" y="36" width="64" height="10" />
-            <!-- Right vertical stem (thin) -->
             <rect x="228" y="46" width="10" height="56" />
             <rect x="221" y="102" width="10" height="56" />
             <rect x="214" y="158" width="10" height="56" />
             <rect x="208" y="214" width="10" height="24" />
 
             <!-- ==================== 'o' ==================== -->
-            <!-- Top & Bottom Bars -->
             <rect x="308" y="88" width="54" height="11" />
             <rect x="292" y="99" width="22" height="12" />
             <rect x="356" y="99" width="22" height="12" />
-            <!-- Left & Right Thick Curved Bowl -->
             <rect x="276" y="111" width="32" height="22" />
             <rect x="364" y="111" width="32" height="22" />
             <rect x="266" y="133" width="34" height="68" />
@@ -371,12 +399,10 @@
             <rect x="302" y="237" width="50" height="11" />
 
             <!-- ==================== 'w' ==================== -->
-            <!-- Top Serifs -->
             <rect x="418" y="88" width="50" height="11" />
             <rect x="518" y="88" width="48" height="11" />
             <rect x="596" y="88" width="46" height="11" />
 
-            <!-- Left Outer Down-Stroke (Thick) -->
             <rect x="430" y="99" width="28" height="26" />
             <rect x="436" y="125" width="28" height="28" />
             <rect x="442" y="153" width="28" height="28" />
@@ -384,14 +410,12 @@
             <rect x="454" y="209" width="22" height="26" />
             <rect x="460" y="235" width="14" height="13" />
 
-            <!-- First Up-Stroke (Thin) -->
             <rect x="474" y="212" width="10" height="24" />
             <rect x="482" y="188" width="10" height="24" />
             <rect x="490" y="164" width="10" height="24" />
             <rect x="498" y="140" width="10" height="24" />
             <rect x="506" y="116" width="10" height="24" />
 
-            <!-- Middle Down-Stroke (Thick) -->
             <rect x="524" y="99" width="28" height="26" />
             <rect x="530" y="125" width="28" height="28" />
             <rect x="536" y="153" width="28" height="28" />
@@ -399,7 +423,6 @@
             <rect x="548" y="209" width="22" height="26" />
             <rect x="554" y="235" width="14" height="13" />
 
-            <!-- Second Outer Up-Stroke (Thin) -->
             <rect x="568" y="212" width="10" height="24" />
             <rect x="576" y="188" width="10" height="24" />
             <rect x="584" y="164" width="10" height="24" />
@@ -408,68 +431,68 @@
             <rect x="608" y="99" width="10" height="17" />
 
             <!-- ==================== 'a' ==================== -->
-            <!-- Top Arch & Terminal Bulb -->
             <rect x="684" y="88" width="64" height="11" />
             <rect x="668" y="99" width="24" height="14" />
             <rect x="658" y="113" width="28" height="22" />
             <rect x="742" y="99" width="30" height="24" />
-            <!-- Right Vertical Stem -->
             <rect x="746" y="123" width="30" height="102" />
-            <!-- Middle Crossbar Step -->
             <rect x="716" y="148" width="30" height="10" />
             <rect x="686" y="158" width="30" height="10" />
             <rect x="664" y="168" width="24" height="14" />
-            <!-- Lower Bowl -->
             <rect x="652" y="182" width="30" height="36" />
             <rect x="662" y="218" width="26" height="18" />
             <rect x="680" y="236" width="44" height="12" />
             <rect x="724" y="224" width="22" height="12" />
-            <!-- Bottom Right Serif Tail -->
             <rect x="746" y="225" width="32" height="23" />
             <rect x="778" y="225" width="16" height="12" />
           </g>
         </svg>
       </div>
 
-      <!-- Desktop Folders (Positioned to match visual mockup) -->
-      <!-- 1. about me -->
-      <div class="desktop-item" style="top: 17.5%; left: 42.3%;" onclick="openWindow('about')">
-        <div class="folder-icon"></div>
-        <span class="folder-label">about me</span>
+      <!-- Desktop Files, Folders & Trash Bin (Snapped to an 8-Column x 4-Row OS Grid) -->
+      <!-- Row 0 (Top Row): about_me.txt (Col 3), personal work (Col 6) -->
+      <div class="desktop-item" data-col="3" data-row="0" data-action="about">
+        <!-- Minimalist .txt File Icon matching aesthetic -->
+        <svg width="76" height="82" viewBox="0 0 84 90" xmlns="http://www.w3.org/2000/svg">
+          <!-- Soft Offset Shadow -->
+          <path d="M12 10 L54 10 L72 28 L72 80 C72 83.3, 69.3 86, 66 86 L12 86 C8.7 86, 6 83.3, 6 80 L6 16 C6 12.7, 8.7 10, 12 10 Z" fill="#dfdfd9" />
+          <!-- Main Paper Body -->
+          <path d="M16 6 L56 6 L74 24 L74 76 C74 79.3, 71.3 82, 68 82 L16 82 C12.7 82, 10 79.3, 10 76 L10 12 C10 8.7, 12.7 6, 16 6 Z" fill="#ffffff" stroke="#d5d5ce" stroke-width="1.5" />
+          <!-- Folded Top-Right Corner Flap -->
+          <path d="M56 6 L56 18 C56 21.3, 58.7 24, 62 24 L74 24 Z" fill="#ededeb" stroke="#d5d5ce" stroke-width="1.5" stroke-linejoin="round" />
+          <!-- Minimalist Text Lines -->
+          <rect x="22" y="34" width="40" height="4" rx="2" fill="#c4c4bc" />
+          <rect x="22" y="45" width="40" height="4" rx="2" fill="#c4c4bc" />
+          <rect x="22" y="56" width="26" height="4" rx="2" fill="#c4c4bc" />
+          <!-- Subtle TXT Badge -->
+          <rect x="22" y="18" width="22" height="9" rx="2.5" fill="#63c7ff" />
+        </svg>
+        <span class="folder-label">about_me.txt</span>
       </div>
 
-      <!-- 2. personal work -->
-      <div class="desktop-item" style="top: 18%; left: 74.6%;" onclick="openWindow('personal')">
+      <div class="desktop-item" data-col="6" data-row="0" data-action="personal">
         <div class="folder-icon"></div>
         <span class="folder-label">personal work</span>
       </div>
 
-      <!-- 3. resume -->
-      <div class="desktop-item" style="top: 41.8%; left: 11.8%;" onclick="openWindow('resume')">
+      <!-- Row 1 (Upper-Mid Row): resume (Col 1), blog (Col 6) -->
+      <div class="desktop-item" data-col="1" data-row="1" data-action="resume">
         <div class="folder-icon"></div>
         <span class="folder-label">resume</span>
       </div>
 
-      <!-- 4. blog -->
-      <div class="desktop-item" style="top: 40.5%; left: 74.6%;" onclick="openWindow('blog')">
+      <div class="desktop-item" data-col="6" data-row="1" data-action="blog">
         <div class="folder-icon"></div>
         <span class="folder-label">blog</span>
       </div>
 
-      <!-- 5. samples -->
-      <div class="desktop-item" style="top: 57.5%; left: 45.8%;" onclick="openWindow('samples')">
+      <!-- Row 2 (Lower-Mid Row): samples (Col 3), trash bin (Col 5) -->
+      <div class="desktop-item" data-col="3" data-row="2" data-action="samples">
         <div class="folder-icon"></div>
         <span class="folder-label">samples</span>
       </div>
 
-      <!-- 6. contact -->
-      <div class="desktop-item" style="top: 73%; left: 29.2%;" onclick="openWindow('contact')">
-        <div class="folder-icon"></div>
-        <span class="folder-label">contact</span>
-      </div>
-
-      <!-- 7. trash bin -->
-      <div id="trash-item" class="desktop-item" style="top: 62.2%; left: 66.8%;" onclick="triggerTrash()">
+      <div id="trash-item" class="desktop-item" data-col="5" data-row="2" data-action="trash">
         <svg width="74" height="90" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="trashBody" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -484,20 +507,20 @@
               <stop offset="100%" stop-color="#ffffff" />
             </linearGradient>
           </defs>
-          <!-- Drop shadow -->
           <ellipse cx="40" cy="88" rx="22" ry="5" fill="rgba(0,0,0,0.08)" />
-          <!-- Back inner rim -->
           <ellipse cx="40" cy="16" rx="28" ry="6.5" fill="#c5c9ce" />
-          <!-- Translucent white/grey mesh body -->
           <path d="M12 16 L20 84 C20 88, 60 88, 60 84 L68 16 Z" fill="url(#trashBody)" stroke="#d0d4d9" stroke-width="1"/>
-          <!-- Subtle vertical highlight -->
           <path d="M52 20 L48 83 L55 82 L61 20 Z" fill="rgba(255,255,255,0.45)" />
-          <!-- Top Rim -->
           <ellipse cx="40" cy="16" rx="28" ry="6.5" fill="none" stroke="url(#trashRim)" stroke-width="2.5" />
-          <!-- Bottom base highlight -->
           <path d="M20 83 C20 87, 60 87, 60 83" fill="none" stroke="#ffffff" stroke-width="2" />
         </svg>
         <span class="folder-label" style="margin-top: 2px;">trash bin</span>
+      </div>
+
+      <!-- Row 3 (Bottom Row): contact (Col 2) -->
+      <div class="desktop-item" data-col="2" data-row="3" data-action="contact">
+        <div class="folder-icon"></div>
+        <span class="folder-label">contact</span>
       </div>
 
       <!-- Sticky Note at Bottom Left -->
@@ -540,16 +563,166 @@
       el.innerHTML = folderSVG;
     });
 
-    // Window Data & File Content Definitions
+    // ================= DESKTOP ICON GRID SYSTEM (8 COLUMNS x 4 ROWS) =================
+    const GRID_COLS = 8;
+    const GRID_ROWS = 4;
+    const ICON_SIZE = 116;
+    const desktopArea = document.getElementById('desktop-area');
+    const gridHighlight = document.getElementById('grid-highlight');
+    const desktopItems = Array.from(document.querySelectorAll('.desktop-item'));
+
+    function getGridMetrics() {
+      const rect = desktopArea.getBoundingClientRect();
+      const padX = rect.width * 0.04;
+      const padTop = rect.height * 0.08;
+      const padBottom = rect.height * 0.06;
+      const usableW = rect.width - padX * 2;
+      const usableH = rect.height - padTop - padBottom;
+      const cellW = usableW / GRID_COLS;
+      const cellH = usableH / GRID_ROWS;
+      return { padX, padTop, cellW, cellH };
+    }
+
+    // Calculate pixel coordinates for a given (col, row) grid slot
+    function gridToPixels(col, row) {
+      const { padX, padTop, cellW, cellH } = getGridMetrics();
+      const left = padX + col * cellW + (cellW - ICON_SIZE) / 2;
+      const top = padTop + row * cellH + (cellH - ICON_SIZE) / 2;
+      return { left, top, cellW, cellH };
+    }
+
+    // Convert pixel center to nearest valid (col, row) grid cell
+    function pixelsToGrid(centerX, centerY) {
+      const { padX, padTop, cellW, cellH } = getGridMetrics();
+      let col = Math.floor((centerX - padX) / cellW);
+      let row = Math.floor((centerY - padTop) / cellH);
+      col = Math.max(0, Math.min(GRID_COLS - 1, col));
+      row = Math.max(0, Math.min(GRID_ROWS - 1, row));
+
+      // Prevent dropping icons directly on top of the bottom-left sticky note (Col 0, Rows 2 & 3)
+      if (col === 0 && row >= 2) {
+        col = 1;
+      }
+      return { col, row };
+    }
+
+    // Position all icons according to their data-col and data-row attributes
+    function layoutIconsOnGrid() {
+      desktopItems.forEach(item => {
+        const col = parseInt(item.dataset.col, 10);
+        const row = parseInt(item.dataset.row, 10);
+        const pos = gridToPixels(col, row);
+        item.style.left = `${pos.left}px`;
+        item.style.top = `${pos.top}px`;
+      });
+    }
+
+    // Make desktop icons draggable with snap-to-grid + click-to-open
+    desktopItems.forEach(item => {
+      let startX = 0, startY = 0;
+      let origLeft = 0, origTop = 0;
+      let isDraggingIcon = false;
+
+      item.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+
+        const rect = item.getBoundingClientRect();
+        const parentRect = desktopArea.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        origLeft = rect.left - parentRect.left;
+        origTop = rect.top - parentRect.top;
+        isDraggingIcon = false;
+
+        function onMouseMove(ev) {
+          const dx = ev.clientX - startX;
+          const dy = ev.clientY - startY;
+
+          if (!isDraggingIcon && Math.hypot(dx, dy) > 6) {
+            isDraggingIcon = true;
+            item.classList.add('icon-dragging');
+            gridHighlight.style.width = `${ICON_SIZE}px`;
+            gridHighlight.style.height = `${ICON_SIZE}px`;
+            gridHighlight.classList.add('visible');
+          }
+
+          if (isDraggingIcon) {
+            const newLeft = origLeft + dx;
+            const newTop = origTop + dy;
+            item.style.left = `${newLeft}px`;
+            item.style.top = `${newTop}px`;
+
+            // Show target grid slot preview
+            const centerX = newLeft + ICON_SIZE / 2;
+            const centerY = newTop + ICON_SIZE / 2;
+            const targetCell = pixelsToGrid(centerX, centerY);
+            const snapPos = gridToPixels(targetCell.col, targetCell.row);
+            gridHighlight.style.left = `${snapPos.left}px`;
+            gridHighlight.style.top = `${snapPos.top}px`;
+          }
+        }
+
+        function onMouseUp(ev) {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+
+          if (isDraggingIcon) {
+            item.classList.remove('icon-dragging');
+            gridHighlight.classList.remove('visible');
+
+            const curLeft = parseFloat(item.style.left);
+            const curTop = parseFloat(item.style.top);
+            const target = pixelsToGrid(curLeft + ICON_SIZE / 2, curTop + ICON_SIZE / 2);
+
+            const prevCol = item.dataset.col;
+            const prevRow = item.dataset.row;
+
+            // If another icon occupies the target cell, swap their grid slots
+            const occupant = desktopItems.find(
+              other => other !== item &&
+              parseInt(other.dataset.col, 10) === target.col &&
+              parseInt(other.dataset.row, 10) === target.row
+            );
+
+            if (occupant) {
+              occupant.dataset.col = prevCol;
+              occupant.dataset.row = prevRow;
+            }
+
+            item.dataset.col = target.col;
+            item.dataset.row = target.row;
+            layoutIconsOnGrid();
+          } else {
+            // Single click without drag -> open window or trigger trash
+            const action = item.dataset.action;
+            if (action === 'trash') {
+              triggerTrash();
+            } else {
+              openWindow(action);
+            }
+          }
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    });
+
+    window.addEventListener('resize', layoutIconsOnGrid);
+    window.addEventListener('DOMContentLoaded', layoutIconsOnGrid);
+    layoutIconsOnGrid();
+
+    // ================= WINDOW DATA & FILE CONTENT DEFINITIONS =================
     const windowConfigs = {
       about: {
-        title: 'about me',
+        title: 'about_me.txt',
         width: 440,
         top: 110,
         left: 340,
         content: `
-          <div class="space-y-4">
-            <div class="flex items-center gap-4 border-b border-[#e8e8e2] pb-4">
+          <div class="space-y-4 font-mono text-xs">
+            <div class="flex items-center gap-4 border-b border-[#e8e8e2] pb-4 font-sans">
               <div class="w-14 h-14 rounded-full bg-[#63c7ff]/20 border border-[#63c7ff] flex items-center justify-center text-xl font-serif italic text-[#1b87d4]">
                 N
               </div>
@@ -558,13 +731,13 @@
                 <p class="text-xs text-[#787872]">Writer, Worldbuilder &amp; Narrative Systems Designer</p>
               </div>
             </div>
-            <p class="text-sm leading-relaxed text-[#454542]">
+            <p class="text-sm leading-relaxed text-[#454542] font-sans">
               Hi! I'm <strong>Nowa</strong>. I craft branching interactive stories, living worlds, and character-driven dialogue systems for indie and AA games.
             </p>
-            <p class="text-sm leading-relaxed text-[#454542]">
+            <p class="text-sm leading-relaxed text-[#454542] font-sans">
               My background blends literary fiction with game systems design—bridging emotional resonance and player agency through environmental storytelling, barks, and reactive quest architecture.
             </p>
-            <div class="bg-[#f3f3ee] p-3 rounded-md text-xs text-[#5a5a55] space-y-1">
+            <div class="bg-[#f3f3ee] p-3 rounded-md text-xs text-[#5a5a55] space-y-1 font-sans">
               <div class="font-medium text-[#2b2b2b]">Toolkit &amp; Engines:</div>
               <div>Twine • Ink • Articy:Draft 3 • Unreal Engine 5 • Yarn Spinner • Final Draft</div>
             </div>
@@ -663,7 +836,7 @@
               'Spreadsheet Template • 310 KB',
               'Open-source combat &amp; stealth bark matrix for indie devs.',
               'Bark_System_Matrix.csv',
-              'State,Intensity,Line,Cooldown\\nAlert,High,"Check thealcove! Torch went out!",15s\\nIdle,Low,"Feet hurt worse than my rations taste.",60s'
+              'State,Intensity,Line,Cooldown\\nAlert,High,"Check the alcove! Torch went out!",15s\\nIdle,Low,"Feet hurt worse than my rations taste.",60s'
             )}
           </div>
         `
@@ -871,7 +1044,7 @@
       activeWin.classList.add('dragging');
 
       const rect = activeWin.getBoundingClientRect();
-      const parentRect = document.getElementById('desktop-area').getBoundingClientRect();
+      const parentRect = desktopArea.getBoundingClientRect();
 
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
