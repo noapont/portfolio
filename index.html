@@ -887,10 +887,6 @@
             <p class="text-sm leading-relaxed text-[#454542] font-sans">
               My background blends literary fiction with game systems design and player agency through environmental storytelling, barks, and character design. 
             </p>
-            <div class="bg-[#f3f3ee] p-3 rounded-md text-xs text-[#5a5a55] space-y-1 font-sans">
-              <div class="font-medium text-[#2b2b2b]">Toolkit &amp; Engines:</div>
-              <div>Twine • Ink • Articy:Draft 3 • Unreal Engine 5 • Yarn Spinner • Final Draft</div>
-            </div>
           </div>
         `
       },
@@ -903,24 +899,24 @@
           <p class="text-xs text-[#7a7a74] mb-3">Selected narrative design documents, branching scripts &amp; bibles:</p>
           <div class="space-y-2.5">
             ${createFileRow(
-              'Quest_Design_Doc.pdf',
+              'Sample1.pdf',
               'PDF Document • 2.4 MB',
-              'Multi-ending murder mystery questline with faction reputation checks.',
-              'Quest_Design_Doc.txt',
+              'Description of the sample',
+              'Sample1.txt',
               'QUEST DESIGN DOCUMENT: THE CLOCKWORK VIGIL\\n\\nObjective: Investigate the disappearance of the Arch-Horologist.\\nBranches: 4 Major Endings, 12 Skill Checks (Rhetoric / Perception).'
             )}
             ${createFileRow(
-              'Interactive_Dialogue_Script.docx',
-              'Word / Ink Script • 840 KB',
-              'Branching companion confrontation scene with trust-state variables.',
-              'Interactive_Dialogue_Script.txt',
+              'Sample2.docx',
+              'Word  • 840 KB',
+              'Description of the sample',
+              'Sample2.txt',
               '=== companion_confrontation ===\\n{ trust >= 5: \\n  "I stayed because I believed in you, Nowa."\\n- else:\\n  "Give me one reason not to walk out that airlock."\\n}'
             )}
             ${createFileRow(
-              'Worldbuilding_Bible.pdf',
+              'Sample3.pdf',
               'PDF Document • 5.1 MB',
-              'Lore compendium, pantheon mythos, and linguistic style guide.',
-              'Worldbuilding_Bible.txt',
+              'Description of the sample',
+              'Sample3.pdf',
               'WORLDBUILDING BIBLE: THE SUNDERED ESTUARY\\n\\n1. Cosmology & Tides\\n2. The Guild of Salt-Scribes\\n3. Dialect & Slang Lexicon'
             )}
           </div>
@@ -941,22 +937,7 @@
               'NOWA — NARRATIVE DESIGNER & WRITER\\n\\nEXPERIENCE:\\n- Lead Narrative Designer @ Studio Astral (2023–Present)\\n- Junior Game Writer @ Clockwork Interactive (2021–2023)'
             )}
             <div class="border-t border-[#e6e6e0] pt-3 space-y-3 text-xs">
-              <div>
-                <div class="flex justify-between font-medium text-[#2b2b2b] flex-wrap gap-1">
-                  <span>Narrative Designer — Studio Astral</span>
-                  <span class="text-[#8a8a84]">2023 – Present</span>
-                </div>
-                <p class="text-[#5c5c57] mt-0.5">Designed 35+ branching quests, wrote 45,000+ words of dialogue, and directed VO recording sessions.</p>
-              </div>
-              <div>
-                <div class="flex justify-between font-medium text-[#2b2b2b] flex-wrap gap-1">
-                  <span>Junior Game Writer — Clockwork Interactive</span>
-                  <span class="text-[#8a8a84]">2021 – 2023</span>
-                </div>
-                <p class="text-[#5c5c57] mt-0.5">Authored item lore, codex entries, and NPC ambient barks for an isometric sci-fi RPG.</p>
-              </div>
-            </div>
-          </div>
+                      </div>
         `
       },
       personal: {
@@ -998,20 +979,20 @@
         left: 380,
         content: `
           <div class="space-y-3">
-            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('On Writing Choice Without Binary Morality', 'True player agency rarely comes from choosing between saintly altruism and cartoon villainy. When every option carries an emotional cost, players stop optimizing stats and start roleplaying.')">
+            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Blog Entry')">
               <div class="text-[11px] text-[#8a8a84]">Oct 14 • 5 min read</div>
-              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">On Writing Choice Without Binary Morality</h3>
-              <p class="text-xs text-[#5a5a55] mt-1">Why grey dilemmas create stronger emotional recall than karma meters...</p>
+              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Entry 1</h3>
+              <p class="text-xs text-[#5a5a55] mt-1">Description of the entry</p>
             </article>
-            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Environmental Storytelling in Tight Spaces', 'A single half-packed suitcase beside an unlocked window tells a faster, more poignant story than a 900-word audio log ever could.')">
+            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Entry 2', 'Description of the entry')">
               <div class="text-[11px] text-[#8a8a84]">Sep 02 • 4 min read</div>
-              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Environmental Storytelling in Tight Spaces</h3>
-              <p class="text-xs text-[#5a5a55] mt-1">Replacing exposition dumps with visual micro-narratives and level props...</p>
+              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Entry 2</h3>
+              <p class="text-xs text-[#5a5a55] mt-1">Description of the entry</p>
             </article>
-            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Designing Barks That Never Get Annoying', 'Repetition fatigue kills immersion. By tagging barks with contextual world-state flags and pacing cooldowns, NPCs feel alive rather than robotic.')">
+            <article class="p-3 rounded-lg bg-[#f3f3ee] hover:bg-[#ecece5] transition cursor-pointer" onclick="previewPost('Entry 3', 'Descriptions of the entry')">
               <div class="text-[11px] text-[#8a8a84]">Jul 19 • 6 min read</div>
-              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Designing Barks That Never Get Annoying</h3>
-              <p class="text-xs text-[#5a5a55] mt-1">Structuring condition matrices and cooldown timers for companion chatter...</p>
+              <h3 class="text-sm font-semibold text-[#2b2b2b] mt-0.5">Entry 3</h3>
+              <p class="text-xs text-[#5a5a55] mt-1">Description of the entry</p>
             </article>
             <div id="blog-reader" class="hidden mt-3 p-3 bg-white border border-[#e0e0d8] rounded text-xs text-[#3b3b38] leading-relaxed"></div>
           </div>
